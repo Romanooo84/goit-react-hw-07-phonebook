@@ -1,7 +1,7 @@
 import { TextInput } from "./textinput"
 import { UsersList } from "./users";
 import { Filter } from "./filter";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch} from "react-redux";
 import { fetchTasks,addUser,deleteUser } from "../redux/opertations";
 import { useState, useEffect,  } from "react";
 import { setFilter } from "../redux/userSlice";
