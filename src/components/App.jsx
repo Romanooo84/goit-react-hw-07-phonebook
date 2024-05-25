@@ -1,36 +1,31 @@
 import { TextInput } from "./textinput"
 import { UsersList } from "./users";
 import { Filter } from "./filter";
-import { useDispatch, useSelector } from "react-redux";
-import { addItem, deleteItem, filterItem} from "../redux/actions";
-import { fetchTasks } from "../redux/opertations";
-import { getItems, getError, getIsLoading } from "../redux/selectror";
-import { useState, useEffect } from "react";
-import { nanoid } from "@reduxjs/toolkit";
+import { useDispatch, useSelector} from "react-redux";
+import { fetchTasks,addUser,deleteUser } from "../redux/opertations";
+import { useState, useEffect,  } from "react";
+import { setFilter } from "../redux/userSlice";
 
 export const App = () => {
 
     const dispatch = useDispatch();
-    const { items, isLoading, error } = useSelector(getItems);
-    let data=useSelector(getItems)
-    /*const isLoading = useSelector(getIsLoading);
-    const error = useSelector(getError);  */    
-
-    useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
-    
-
     const [nameValue, setNameValue] = useState('');
     const [numberValue, setNumberValue] = useState('')
     const [name, setName] = useState()
-    const [number, setNumber] =useState()
+    const [number, setNumber] = useState()
+    const [refresh, setRefresh] = useState(false)
+
+    
+
+       useEffect(() => {
+    dispatch(fetchTasks());
+       }, [dispatch, refresh]);
+    
 
     const onChange = event => {
         event.preventDefault();
-        console.log(items)
-        console.log(isLoading)
         if (event.target.name === 'name') {
+            
             setNameValue(event.target.value);
             setName(event.target.value)
         }
@@ -40,35 +35,28 @@ export const App = () => {
         }
 
         else if (event.target.name === 'filter') {
-            dispatch(filterItem(event.target.value));
-
+            dispatch(setFilter(event.target.value));
         }
     
     };
 
     const onSubmit = event => {
         event.preventDefault();
-        
-        let userData = { id: nanoid(), name: name, number: number }
-        dispatch(addItem(userData));
+        dispatch(addUser({ name: name, phone: number }));
         setName()
         setNumber()
         setNameValue('')
         setNumberValue('')
+        setRefresh(!refresh)
     }
 
     const onClick = event => {
         event.preventDefault();
-        dispatch(deleteItem(event.target.parentNode.id));
+        dispatch(deleteUser(event.target.parentNode.id));
     }
 
     return (
         <div>
-             <div>
-      {isLoading && <b>Loading tasks...</b>}
-      {error && <b>{error}</b>}
-      <p>{items && JSON.stringify(items, null, 2)}</p>
-    </div>
             <TextInput onSubmit={onSubmit} onChange={onChange} nameValue={nameValue} numberValue={numberValue}/>
             <Filter onChange={onChange}/>
             <UsersList onClick={onClick}/>
